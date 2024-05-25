@@ -1,10 +1,10 @@
 import time
 import gym
-import json
 from gym import error, spaces, utils
 import numpy as np
 import os
 from model.utils import BatchLoader
+import random
 
 
 class CoinBotEnv(gym.Env):
@@ -12,15 +12,24 @@ class CoinBotEnv(gym.Env):
     def __init__(self, **kwargs):
         batch_size = 10
         next_records = 5
+        self.env_type = 0 ## 0 para treinamento, 1 para validação
         if len(kwargs) > 0 and kwargs['batch_size']:
             batch_size = kwargs['batch_size']
         if len(kwargs) > 0 and kwargs['next_records']:
             next_records = kwargs['next_records']
-        ## obtendo o loader de amostras
-        self.loader = BatchLoader('dataset/btc_data_1m.h5', batch_size=batch_size, next_records=next_records)
-        ## obtendo uma amostra
-        self.batch, self.next_candle, diff = self.loader.get_random_batch_with_next()
-        batch_values = self.batch[['open', 'high', 'low', 'close', 'volume']].values.flatten().tolist()
+        if len(kwargs) > 0 and kwargs['env_type']:
+            self.env_type = kwargs['env_type']
+
+        if self.env_type == 0:
+            ## obtendo o loader de amostras
+            self.loader = BatchLoader('dataset/btc_data_1m.h5', batch_size=batch_size, next_records=next_records)
+            ## obtendo uma amostra
+            self.batch, self.next_candle, diff = self.loader.get_random_batch_with_next()
+            batch_values = self.batch[['open', 'high', 'low', 'close', 'volume']].values.flatten().tolist()
+        else:
+            ## validação, então não preciso carregar o dataset, pois será carregado pelo script de validação
+            batch_values = [random.uniform(0.0, 1.0) for _ in range(batch_size * 5)]
+
         self.observation_space = batch_values
 
         # -1 não compra; +1 compra
