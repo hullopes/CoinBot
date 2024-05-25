@@ -1,0 +1,10 @@
+README.md
+setup.py
+coinbot_env/__init__.py
+coinbot_env.egg-info/PKG-INFO
+coinbot_env.egg-info/SOURCES.txt
+coinbot_env.egg-info/dependency_links.txt
+coinbot_env.egg-info/requires.txt
+coinbot_env.egg-info/top_level.txt
+coinbot_env/envs/__init__.py
+coinbot_env/envs/coinbot_env.py
